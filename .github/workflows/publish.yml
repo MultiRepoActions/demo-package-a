@@ -1,0 +1,37 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          cache: "pnpm"
+          node-version: "20"
+
+      - run: pnpm install
+
+      #   - run: pnpm ci
+      - run: pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION }}
+
+      - name: Trigger Repo Dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+            token: ${{ secrets.ACCESS_TOKEN_FOR_PR_AUTOMATION }}
+            repository: MultiRepoActions/actions # Replace with the repository you want to dispatch to
+            event-type: auto-update-packages-test # Replace with the event type you want to trigger
+            client-payload: |
+              {
+                  "package_name": "@multi-repo-actions/demo-package-a",
+                  "package_version": "${{ github.event.release.tag_name }}",
+                  "target_branch": "main"
+              }
