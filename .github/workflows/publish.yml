@@ -16,8 +16,6 @@ jobs:
           cache: "pnpm"
           node-version: "20"
 
-      - run: pnpm install
-
       #   - run: pnpm ci
       - run: pnpm publish --access public
         env:
@@ -26,12 +24,12 @@ jobs:
       - name: Trigger Repo Dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
-            token: ${{ secrets.ACCESS_TOKEN_FOR_PR_AUTOMATION }}
-            repository: MultiRepoActions/actions # Replace with the repository you want to dispatch to
-            event-type: auto-update-packages-test # Replace with the event type you want to trigger
-            client-payload: |
-              {
-                  "package_name": "@multi-repo-actions/demo-package-a",
-                  "package_version": "${{ github.event.release.tag_name }}",
-                  "target_branch": "main"
-              }
+          token: ${{ secrets.ACCESS_TOKEN_FOR_PR_AUTOMATION }}
+          repository: MultiRepoActions/actions # Replace with the repository you want to dispatch to
+          event-type: auto-update-packages-test # Replace with the event type you want to trigger
+          client-payload: |
+            {
+                "package_name": "@multi-repo-actions/demo-package-a",
+                "package_version": "${{ github.event.release.tag_name }}",
+                "target_branch": "main"
+            }
