@@ -17,7 +17,7 @@ jobs:
           node-version: "20"
 
       #   - run: pnpm ci
-      - run: pnpm publish --access public
+      - run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION }}
 
